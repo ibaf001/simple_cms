@@ -1,7 +1,5 @@
 SimpleCms::Application.routes.draw do
-  
-  
- 
+
   #get "access/index"
   #get "access/login"
   root "demo#index"

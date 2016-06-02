@@ -2,9 +2,9 @@ class AdminUser < ActiveRecord::Base
   has_and_belongs_to_many :pages
   has_many :section_edits
   has_many :sections, :through => :section_edits
-  
+  FORBIDDEN_USERNAMES = ["makako","lifobo","bolingo"]
   has_secure_password
-
+  
   EMAIL_REGEX = /\A[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}\z/
   validates_presence_of :first_name
   validates_length_of :first_name, :maximum => 25
@@ -16,6 +16,18 @@ class AdminUser < ActiveRecord::Base
   validates_presence_of :email
   validates_length_of :email, :maximum => 100
   validates_format_of :email, :with => EMAIL_REGEX
-  validates_confirmation_of :email
+  #validates_confirmation_of :email
+  validate :username_is_allowed
+  
+  scope :sorted, lambda{order("last_name ASC, first_name ASC")}
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  def username_is_allowed
+    if FORBIDDEN_USERNAMES.include?(username)
+      errors.add(:username, "has been restricted from use")
+    end
+  end
   
 end
